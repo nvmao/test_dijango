@@ -10,7 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+from contextvars import ContextVar
+
+from django.forms.fields import ChoiceField
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,7 +41,27 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'constance',
+    'maos',
 ]
+
+CONSTANCE_BACKEND = 'constance.backends.redisd.RedisBackend'
+
+
+CONSTANCE_ADDITIONAL_FIELDS = {
+    'mmm': ['contextvars.ContextVar', {'name':'cc','default':56}],
+}
+
+CONSTANCE_CONFIG = {
+}
+
+CONSTANCE_IGNORE_ADMIN_VERSION_CHECK = True
+
+CONSTANCE_REDIS_CONNECTION = {
+    'host': 'localhost',
+    'port': 6379,
+    'db': 0,
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,7 +78,10 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'maos', 'templates', 'maos')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
